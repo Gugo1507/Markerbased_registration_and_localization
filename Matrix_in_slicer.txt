@@ -1,0 +1,27 @@
+import slicer
+import vtk
+import numpy as np
+
+# Insert the transformation matrix from registration algorithms
+matrix = np.array(
+[[ 2.03599872e-01, -9.76105666e-01, -7.59412584e-02, -1.46240255e+02],
+ [-6.64049539e-01, -8.06789638e-02, -7.43323054e-01, -5.33095557e+01],
+ [ 7.19434209e-01,  2.01769117e-01, -6.64607951e-01,  1.19790193e+02],
+ [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,  1.00000000e+00]])
+
+# Create a new transform node
+transformNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLinearTransformNode')
+
+# Set the transformation matrix to the transform node
+transformMatrix = vtk.vtkMatrix4x4()
+for i in range(4):
+    for j in range(4):
+        transformMatrix.SetElement(i, j, matrix[i, j])
+
+transformNode.SetMatrixTransformToParent(transformMatrix)
+
+# Apply this transform to a model or volume
+modelOrVolumeNode = slicer.util.getNode('LinearTransform_1')  #Put here inferior transf. matrix or model
+modelOrVolumeNode.SetAndObserveTransformNodeID(transformNode.GetID())
+
+print("Transform has been successfully applied.")
